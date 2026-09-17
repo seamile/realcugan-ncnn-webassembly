@@ -1,6 +1,6 @@
-project(realcugan-ncnn-webassembly)
-
 cmake_minimum_required(VERSION 3.10)
+
+project(realcugan-ncnn-webassembly)
 
 option(LOCAL_DEBUG "debug" OFF)
 
@@ -14,23 +14,17 @@ add_subdirectory(fmt)
 add_subdirectory(ncnn)
 
 if (NOT LOCAL_DEBUG)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s FORCE_FILESYSTEM=1  -sALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=1  -sALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1")
-    set(CMAKE_EXECUTBLE_LINKER_FLAGS "${CMAKE_EXECUTBLE_LINKER_FLAGS} -s FORCE_FILESYSTEM=1  -sALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1")
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -sEXPORTED_FUNCTIONS=['_process_image','_free'] --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/models@. --use-preload-cache")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -sEXPORTED_FUNCTIONS=['_process_image','_free'] --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/models@. --use-preload-cache")
-    set(CMAKE_EXECUTBLE_LINKER_FLAGS "${CMAKE_EXECUTBLE_LINKER_FLAGS} -sEXPORTED_FUNCTIONS=['_process_image','_free'] --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/models@. --use-preload-cache")
-
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+    set(REALCUGAN_LINK_FLAGS "-s FORCE_FILESYSTEM=1 -sALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 -sEXPORTED_FUNCTIONS=['_process_image','_free'] --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/models@. --use-preload-cache")
 endif()
 
 if(${WASM_FEATURE} MATCHES "threads")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp -pthread -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=navigator.hardwareConcurrency")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -pthread -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=navigator.hardwareConcurrency")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fopenmp -pthread -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=navigator.hardwareConcurrency")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp -pthread")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -pthread")
+    set(REALCUGAN_LINK_FLAGS "${REALCUGAN_LINK_FLAGS} -fopenmp -pthread -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=navigator.hardwareConcurrency")
 endif()
 
 add_executable(realcugan-ncnn-webassembly-${WASM_FEATURE} main.cpp realcugan.cpp)
 set_property(TARGET realcugan-ncnn-webassembly-${WASM_FEATURE} PROPERTY CXX_STANDARD 11)
+set_property(TARGET realcugan-ncnn-webassembly-${WASM_FEATURE} PROPERTY LINK_FLAGS "${REALCUGAN_LINK_FLAGS}")
 target_link_libraries(realcugan-ncnn-webassembly-${WASM_FEATURE} ncnn fmt)
