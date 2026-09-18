@@ -29,6 +29,7 @@ fi
 
 cmake -S . -B build \
     -DCMAKE_TOOLCHAIN_FILE="$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DWASM_FEATURE=simd-threads \
     -DNCNN_THREADS=ON \
     -DNCNN_OPENMP=ON \

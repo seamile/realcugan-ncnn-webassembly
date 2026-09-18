@@ -1,6 +1,6 @@
 # IDE
-/.vscode
-/.idea
+.vscode
+.idea
 
 # CMake build directory
 build/
@@ -8,8 +8,10 @@ cmake-build-debug/
 
 # files
 .DS_Store
+.serena/
 /ncnn
 /fmt
 /web/realcugan-ncnn-webassembly*
 /web/up2x*
 /web/up3x*
+/realcugan-server

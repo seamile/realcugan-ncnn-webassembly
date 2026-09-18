@@ -439,7 +439,7 @@
                         }
                         fetch("realcugan-ncnn-webassembly-simd-threads.wasm")
                             .then((response) => {
-                                response.arrayBuffer();
+                                return response.arrayBuffer();
                             })
                             .then((buffer) => {
                                 Module.wasmBinary = buffer;
